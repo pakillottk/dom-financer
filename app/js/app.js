@@ -21562,6 +21562,12 @@
 
 	var _materialUi = __webpack_require__(180);
 
+	var _Table = __webpack_require__(523);
+
+	var _comeeditormodal = __webpack_require__(554);
+
+	var _comeeditormodal2 = _interopRequireDefault(_comeeditormodal);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -21573,16 +21579,343 @@
 	var FinancesPanel = function (_React$Component) {
 	  _inherits(FinancesPanel, _React$Component);
 
-	  function FinancesPanel() {
+	  function FinancesPanel(props) {
 	    _classCallCheck(this, FinancesPanel);
 
-	    return _possibleConstructorReturn(this, (FinancesPanel.__proto__ || Object.getPrototypeOf(FinancesPanel)).apply(this, arguments));
+	    var _this = _possibleConstructorReturn(this, (FinancesPanel.__proto__ || Object.getPrototypeOf(FinancesPanel)).call(this, props));
+
+	    _this.handleChangeMinDate = function (event, date) {
+	      _this.setState({
+	        minDate: date
+	      });
+	    };
+
+	    _this.handleChangeMaxDate = function (event, date) {
+	      _this.setState({
+	        maxDate: date
+	      });
+	    };
+
+	    _this.storeIncome = function (income) {
+	      var incomes = _this.state.incomes;
+	      incomes.push(income);
+	      _this.setState({ incomes: incomes });
+	    };
+
+	    _this.updateIncome = function (income, index) {
+	      var incomes = _this.state.incomes;
+	      incomes[index] = income;
+	      _this.setState({ incomes: incomes });
+	    };
+
+	    _this.deleteIncome = function (index) {
+	      var incomes = _this.state.incomes;
+	      incomes.splice(index, 1);
+	      _this.setState({ incomes: incomes });
+	    };
+
+	    _this.storeOutcome = function (outcome) {
+	      var outcomes = _this.state.outcomes;
+	      outcomes.push(outcome);
+	      _this.setState({ outcomes: outcomes });
+	    };
+
+	    _this.updateOutcome = function (outcome, index) {
+	      var outcomes = _this.state.outcomes;
+	      outcomes[index] = outcome;
+	      _this.setState({ outcomes: outcomes });
+	    };
+
+	    _this.deleteOutcome = function (index) {
+	      var outcomes = _this.state.outcomes;
+	      outcomes.splice(index, 1);
+	      _this.setState({ outcomes: outcomes });
+	    };
+
+	    var minDate = new Date();
+	    var maxDate = new Date();
+	    maxDate.setFullYear(maxDate.getFullYear() + 1);
+
+	    _this.state = {
+	      minDate: minDate,
+	      maxDate: maxDate,
+	      selectionIndex: -1,
+	      selectedIncome: null,
+	      selectedOutcome: null,
+	      incomes: [{
+	        concept: "Ingreso A",
+	        ammount: 500.0,
+	        date: "23-01-2017"
+	      }],
+	      outcomes: [{
+	        concept: "Gasto A",
+	        ammount: 1000.0,
+	        date: "30-01-2017"
+	      }]
+	    };
+	    return _this;
 	  }
 
 	  _createClass(FinancesPanel, [{
 	    key: 'render',
 	    value: function render() {
-	      return _react2.default.createElement(_materialUi.RaisedButton, { label: 'Click me!' });
+	      var _this2 = this;
+
+	      var totalIncome = 0.0;
+	      var totalOutcome = 0.0;
+
+	      var incomesRows = [];
+	      this.state.incomes.forEach(function (income, index) {
+	        totalIncome += income.ammount;
+	        incomesRows.push(_react2.default.createElement(
+	          _Table.TableRow,
+	          { key: index, id: index },
+	          _react2.default.createElement(
+	            _Table.TableRowColumn,
+	            null,
+	            ' ',
+	            income.concept,
+	            ' '
+	          ),
+	          _react2.default.createElement(
+	            _Table.TableRowColumn,
+	            null,
+	            ' ',
+	            income.ammount + "€",
+	            ' '
+	          ),
+	          _react2.default.createElement(
+	            _Table.TableRowColumn,
+	            null,
+	            ' ',
+	            income.date,
+	            ' '
+	          )
+	        ));
+	      });
+
+	      var outcomesRows = [];
+	      this.state.outcomes.forEach(function (outcome, index) {
+	        totalOutcome += outcome.ammount;
+	        outcomesRows.push(_react2.default.createElement(
+	          _Table.TableRow,
+	          { key: index, id: index },
+	          _react2.default.createElement(
+	            _Table.TableRowColumn,
+	            null,
+	            ' ',
+	            outcome.concept,
+	            ' '
+	          ),
+	          _react2.default.createElement(
+	            _Table.TableRowColumn,
+	            null,
+	            ' ',
+	            outcome.ammount + "€",
+	            ' '
+	          ),
+	          _react2.default.createElement(
+	            _Table.TableRowColumn,
+	            null,
+	            ' ',
+	            outcome.date,
+	            ' '
+	          )
+	        ));
+	      });
+
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(_materialUi.DatePicker, {
+	          floatingLabelText: 'Fecha inicial',
+	          onChange: this.handleChangeMinDate,
+	          autoOk: false,
+	          defaultDate: this.state.minDate,
+	          disableYearSelection: false
+	        }),
+	        _react2.default.createElement(_materialUi.DatePicker, {
+	          floatingLabelText: 'Fecha final',
+	          onChange: this.handleChangeMaxDate,
+	          autoOk: false,
+	          defaultDate: this.state.minDate,
+	          disableYearSelection: false
+	        }),
+	        _react2.default.createElement(_comeeditormodal2.default, { come: null }),
+	        _react2.default.createElement(
+	          _Table.Table,
+	          { onCellClick: function onCellClick(row) {
+	              _this2.setState({ selectionIndex: row, selectedIncome: _this2.state.incomes[row] });
+	            } },
+	          _react2.default.createElement(
+	            _Table.TableHeader,
+	            { displaySelectAll: false, adjustForCheckbox: false },
+	            _react2.default.createElement(
+	              _Table.TableRow,
+	              null,
+	              _react2.default.createElement(
+	                _Table.TableHeaderColumn,
+	                { colSpan: '3', tooltip: 'Haga click en un ingreso para editar o eliminar', style: { textAlign: 'center' } },
+	                'INGRESOS'
+	              )
+	            ),
+	            _react2.default.createElement(
+	              _Table.TableRow,
+	              null,
+	              _react2.default.createElement(
+	                _Table.TableHeaderColumn,
+	                null,
+	                'Ingreso'
+	              ),
+	              _react2.default.createElement(
+	                _Table.TableHeaderColumn,
+	                null,
+	                'Cantidad'
+	              ),
+	              _react2.default.createElement(
+	                _Table.TableHeaderColumn,
+	                null,
+	                'Fecha'
+	              )
+	            )
+	          ),
+	          _react2.default.createElement(
+	            _Table.TableBody,
+	            { stripedRows: true, displayRowCheckbox: false },
+	            incomesRows
+	          ),
+	          _react2.default.createElement(
+	            _Table.TableFooter,
+	            { adjustForCheckbox: false },
+	            _react2.default.createElement(
+	              _Table.TableRow,
+	              null,
+	              _react2.default.createElement(
+	                _Table.TableRowColumn,
+	                { colSpan: '3', style: { textAlign: 'center' } },
+	                _react2.default.createElement(_materialUi.RaisedButton, { label: 'Nuevo Ingreso', primary: true })
+	              )
+	            )
+	          )
+	        ),
+	        _react2.default.createElement(
+	          _Table.Table,
+	          { onCellClick: function onCellClick(row) {
+	              _this2.setState({ selectionIndex: row, selectedOutcome: _this2.state.outcomes[row] });
+	            } },
+	          _react2.default.createElement(
+	            _Table.TableHeader,
+	            { displaySelectAll: false, adjustForCheckbox: false },
+	            _react2.default.createElement(
+	              _Table.TableRow,
+	              null,
+	              _react2.default.createElement(
+	                _Table.TableHeaderColumn,
+	                { colSpan: '3', tooltip: 'Haga click en un gasto para editar o eliminar', style: { textAlign: 'center' } },
+	                'GASTOS'
+	              )
+	            ),
+	            _react2.default.createElement(
+	              _Table.TableRow,
+	              null,
+	              _react2.default.createElement(
+	                _Table.TableHeaderColumn,
+	                null,
+	                'Gasto'
+	              ),
+	              _react2.default.createElement(
+	                _Table.TableHeaderColumn,
+	                null,
+	                'Cantidad'
+	              ),
+	              _react2.default.createElement(
+	                _Table.TableHeaderColumn,
+	                null,
+	                'Fecha'
+	              )
+	            )
+	          ),
+	          _react2.default.createElement(
+	            _Table.TableBody,
+	            { stripedRows: true, displayRowCheckbox: false },
+	            outcomesRows
+	          ),
+	          _react2.default.createElement(
+	            _Table.TableFooter,
+	            { adjustForCheckbox: false },
+	            _react2.default.createElement(
+	              _Table.TableRow,
+	              null,
+	              _react2.default.createElement(
+	                _Table.TableRowColumn,
+	                { colSpan: '3', style: { textAlign: 'center' } },
+	                _react2.default.createElement(_materialUi.RaisedButton, { label: 'Nuevo Gasto', primary: true })
+	              )
+	            )
+	          )
+	        ),
+	        _react2.default.createElement(
+	          _Table.Table,
+	          null,
+	          _react2.default.createElement(
+	            _Table.TableHeader,
+	            { displaySelectAll: false, adjustForCheckbox: false },
+	            _react2.default.createElement(
+	              _Table.TableHeaderColumn,
+	              { colSpan: '3', style: { textAlign: 'center' } },
+	              'RESUMEN DEL PERIODO'
+	            ),
+	            _react2.default.createElement(
+	              _Table.TableRow,
+	              null,
+	              _react2.default.createElement(
+	                _Table.TableHeaderColumn,
+	                null,
+	                'Total Ingresos'
+	              ),
+	              _react2.default.createElement(
+	                _Table.TableHeaderColumn,
+	                null,
+	                'Total Gastos'
+	              ),
+	              _react2.default.createElement(
+	                _Table.TableHeaderColumn,
+	                null,
+	                'Balance'
+	              )
+	            )
+	          ),
+	          _react2.default.createElement(
+	            _Table.TableBody,
+	            { stripedRows: true, displayRowCheckbox: false },
+	            _react2.default.createElement(
+	              _Table.TableRow,
+	              null,
+	              _react2.default.createElement(
+	                _Table.TableRowColumn,
+	                null,
+	                ' ',
+	                totalIncome + '€',
+	                ' '
+	              ),
+	              _react2.default.createElement(
+	                _Table.TableRowColumn,
+	                null,
+	                ' ',
+	                totalOutcome + '€',
+	                ' '
+	              ),
+	              _react2.default.createElement(
+	                _Table.TableRowColumn,
+	                null,
+	                ' ',
+	                totalIncome - totalOutcome + '€',
+	                ' '
+	              )
+	            )
+	          )
+	        )
+	      );
 	    }
 	  }]);
 
@@ -61633,6 +61966,112 @@
 	};
 
 	module.exports = keyOf;
+
+/***/ },
+/* 554 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _materialUi = __webpack_require__(180);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var ComeEditorModal = function (_React$Component) {
+	  _inherits(ComeEditorModal, _React$Component);
+
+	  function ComeEditorModal(props) {
+	    _classCallCheck(this, ComeEditorModal);
+
+	    var _this = _possibleConstructorReturn(this, (ComeEditorModal.__proto__ || Object.getPrototypeOf(ComeEditorModal)).call(this, props));
+
+	    _this.handleChangeConcept = function (event) {
+	      var come = _this.state.come;
+	      come.concept = event.target.value;
+	      _this.setState({ come: come });
+	    };
+
+	    _this.handleChangeAmmount = function (event) {
+	      var come = _this.state.come;
+	      var regex = /^[. \d]*$/;
+	      if (regex.test(event.target.value)) {
+	        come.ammount = event.target.value;
+	      }
+	      _this.setState({ come: come });
+	    };
+
+	    _this.handleChangeDate = function (event, date) {
+	      var come = _this.state.come;
+	      come.date = date;
+	      _this.setState({ come: come });
+	    };
+
+	    _this.state = {
+	      come: _this.props.come != null ? _this.props.come : {
+	        concept: "", ammount: 0, date: new Date().getFullYear()
+	      }
+	    };
+	    return _this;
+	  }
+
+	  _createClass(ComeEditorModal, [{
+	    key: 'render',
+	    value: function render() {
+	      var actions = [_react2.default.createElement(_materialUi.RaisedButton, {
+	        label: 'Guardar',
+	        primary: true
+	      }), _react2.default.createElement(_materialUi.RaisedButton, {
+	        label: 'Eliminar',
+	        secondary: true
+	      })];
+
+	      return _react2.default.createElement(
+	        _materialUi.Dialog,
+	        {
+	          actions: actions,
+	          modal: true,
+	          open: false
+	        },
+	        _react2.default.createElement(_materialUi.TextField, {
+	          id: 'concept-field',
+	          floatingLabelText: 'Concepto',
+	          value: this.state.come.concept,
+	          onChange: this.handleChangeConcept
+	        }),
+	        _react2.default.createElement(_materialUi.TextField, {
+	          id: 'ammount-field',
+	          floatingLabelText: 'Cantidad (\u20AC)',
+	          value: this.state.come.ammount,
+	          onChange: this.handleChangeAmmount
+	        }),
+	        _react2.default.createElement(_materialUi.DatePicker, {
+	          onChange: this.handleChangeDate,
+	          floatingLabelText: 'Fecha'
+	        })
+	      );
+	    }
+	  }]);
+
+	  return ComeEditorModal;
+	}(_react2.default.Component);
+
+	exports.default = ComeEditorModal;
 
 /***/ }
 /******/ ]);
