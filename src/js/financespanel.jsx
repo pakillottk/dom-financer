@@ -29,7 +29,8 @@ export default class FinancesPanel extends React.Component {
       }],
       storeMethod: this.storeIncome,
       updateMethod: this.updateIncome,
-      deleteMethod: this.deleteIncome
+      deleteMethod: this.deleteIncome,
+      openEditor: false
     };
   }
 
@@ -99,12 +100,40 @@ export default class FinancesPanel extends React.Component {
 
   selectIncome = (index) => {
     this.setIncomesMethods();
-    this.setState( { selectedIndex: index, selectedCome: incomes[index] } );
+    this.setState( { selectedIndex: index, selectedCome: this.state.incomes[index] } );
+    this.openEditor();
   }
 
   selectOutcome = (index) => {
     this.setOutcomesMethods();
-    this.setState( { selectedIndex: index, selectedCome: outcomes[index] } );
+    this.setState( { selectedIndex: index, selectedCome: this.state.outcomes[index] } );
+    this.openEditor();
+  }
+
+  createIncome = () => {
+    this.setIncomesMethods();
+    this.setState({
+      selectedCome: null,
+      selectedIndex: -1
+    });
+    this.openEditor();
+  }
+
+  createOutcome = () => {
+    this.setOutcomesMethods();
+    this.setState({
+      selectedCome: null,
+      selectedIndex: -1
+    });
+    this.openEditor();
+  }
+
+  openEditor = () => {
+    this.setState( { openEditor: true } );
+  }
+
+  closeEditor = () => {
+    this.setState( { openEditor: false } );
   }
 
   render() {
@@ -124,17 +153,17 @@ export default class FinancesPanel extends React.Component {
     })
 
 
-      const outcomesRows = [];
-      this.state.outcomes.forEach((outcome, index) => {
-        totalOutcome += outcome.ammount;
-        outcomesRows.push(
-          ( <TableRow key={index} id={index}>
-              <TableRowColumn> {outcome.concept} </TableRowColumn>
-              <TableRowColumn> {outcome.ammount + "€"} </TableRowColumn>
-              <TableRowColumn> {outcome.date} </TableRowColumn>
-            </TableRow>)
-        );
-      })
+    const outcomesRows = [];
+    this.state.outcomes.forEach((outcome, index) => {
+      totalOutcome += outcome.ammount;
+      outcomesRows.push(
+        ( <TableRow key={index} id={index}>
+            <TableRowColumn> {outcome.concept} </TableRowColumn>
+            <TableRowColumn> {outcome.ammount + "€"} </TableRowColumn>
+            <TableRowColumn> {outcome.date} </TableRowColumn>
+          </TableRow>)
+      );
+    })
 
     return (
       <div>
@@ -153,17 +182,24 @@ export default class FinancesPanel extends React.Component {
           disableYearSelection={false}
         />
 
-        <ComeEditorModal come={null} />
+        {this.state.openEditor && <ComeEditorModal
+          open={this.state.openEditor}
+          close={this.closeEditor}
+          index={this.state.selectedIndex}
+          come={this.state.selectedCome}
+          store={this.state.storeMethod}
+          update={this.state.updateMethod}
+          delete={this.state.deleteMethod}
+        />}
 
         {/* INCOMES TABLE */}
-        <Table onCellClick={ (row) => { this.setState({selectionIndex: row, selectedIncome: this.state.incomes[row]}) } }>
+        <Table onCellClick={ (row) => { this.selectIncome( row ) } } >
           <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
             <TableRow>
               <TableHeaderColumn colSpan="3" tooltip="Haga click en un ingreso para editar o eliminar" style={{textAlign: 'center'}}>
                 INGRESOS
               </TableHeaderColumn>
             </TableRow>
-
             <TableRow>
               <TableHeaderColumn>Ingreso</TableHeaderColumn>
               <TableHeaderColumn>Cantidad</TableHeaderColumn>
@@ -176,14 +212,14 @@ export default class FinancesPanel extends React.Component {
           <TableFooter adjustForCheckbox={false}>
             <TableRow>
               <TableRowColumn colSpan="3" style={{textAlign: 'center'}}>
-                <RaisedButton label='Nuevo Ingreso' primary/>
+                <RaisedButton label='Nuevo Ingreso' primary onClick={ () => { this.createIncome(); } } />
               </TableRowColumn>
             </TableRow>
           </TableFooter>
         </Table>
 
         {/* OUTCOMES TABLE */}
-        <Table onCellClick={ (row) => { this.setState({selectionIndex: row, selectedOutcome: this.state.outcomes[row]}) } }>
+        <Table onCellClick={ (row) => { this.selectOutcome(row) } }>
           <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
             <TableRow>
               <TableHeaderColumn colSpan="3" tooltip="Haga click en un gasto para editar o eliminar" style={{textAlign: 'center'}}>
@@ -202,7 +238,7 @@ export default class FinancesPanel extends React.Component {
           <TableFooter adjustForCheckbox={false}>
             <TableRow>
               <TableRowColumn colSpan="3" style={{textAlign: 'center'}}>
-                <RaisedButton label='Nuevo Gasto' primary/>
+                <RaisedButton label='Nuevo Gasto' primary onClick={ () => { this.createOutcome(); } }/>
               </TableRowColumn>
             </TableRow>
           </TableFooter>

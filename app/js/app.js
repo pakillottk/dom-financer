@@ -67,7 +67,7 @@
 
 	var _financespanel2 = _interopRequireDefault(_financespanel);
 
-	var _reactTapEventPlugin = __webpack_require__(548);
+	var _reactTapEventPlugin = __webpack_require__(549);
 
 	var _reactTapEventPlugin2 = _interopRequireDefault(_reactTapEventPlugin);
 
@@ -21564,7 +21564,7 @@
 
 	var _Table = __webpack_require__(523);
 
-	var _comeeditormodal = __webpack_require__(554);
+	var _comeeditormodal = __webpack_require__(548);
 
 	var _comeeditormodal2 = _interopRequireDefault(_comeeditormodal);
 
@@ -21593,6 +21593,22 @@
 	    _this.handleChangeMaxDate = function (event, date) {
 	      _this.setState({
 	        maxDate: date
+	      });
+	    };
+
+	    _this.setIncomesMethods = function () {
+	      _this.setState({
+	        storeMethod: _this.storeIncome,
+	        updateMethod: _this.updateIncome,
+	        deleteMethod: _this.deleteIncome
+	      });
+	    };
+
+	    _this.setOutcomesMethods = function () {
+	      _this.setState({
+	        storeMethod: _this.storeOutcome,
+	        updateMethod: _this.updateOutcome,
+	        deleteMethod: _this.deleteOutcome
 	      });
 	    };
 
@@ -21632,6 +21648,44 @@
 	      _this.setState({ outcomes: outcomes });
 	    };
 
+	    _this.selectIncome = function (index) {
+	      _this.setIncomesMethods();
+	      _this.setState({ selectedIndex: index, selectedCome: _this.state.incomes[index] });
+	      _this.openEditor();
+	    };
+
+	    _this.selectOutcome = function (index) {
+	      _this.setOutcomesMethods();
+	      _this.setState({ selectedIndex: index, selectedCome: _this.state.outcomes[index] });
+	      _this.openEditor();
+	    };
+
+	    _this.createIncome = function () {
+	      _this.setIncomesMethods();
+	      _this.setState({
+	        selectedCome: null,
+	        selectedIndex: -1
+	      });
+	      _this.openEditor();
+	    };
+
+	    _this.createOutcome = function () {
+	      _this.setOutcomesMethods();
+	      _this.setState({
+	        selectedCome: null,
+	        selectedIndex: -1
+	      });
+	      _this.openEditor();
+	    };
+
+	    _this.openEditor = function () {
+	      _this.setState({ openEditor: true });
+	    };
+
+	    _this.closeEditor = function () {
+	      _this.setState({ openEditor: false });
+	    };
+
 	    var minDate = new Date();
 	    var maxDate = new Date();
 	    maxDate.setFullYear(maxDate.getFullYear() + 1);
@@ -21640,8 +21694,7 @@
 	      minDate: minDate,
 	      maxDate: maxDate,
 	      selectionIndex: -1,
-	      selectedIncome: null,
-	      selectedOutcome: null,
+	      selectedCome: null,
 	      incomes: [{
 	        concept: "Ingreso A",
 	        ammount: 500.0,
@@ -21651,7 +21704,11 @@
 	        concept: "Gasto A",
 	        ammount: 1000.0,
 	        date: "30-01-2017"
-	      }]
+	      }],
+	      storeMethod: _this.storeIncome,
+	      updateMethod: _this.updateIncome,
+	      deleteMethod: _this.deleteIncome,
+	      openEditor: false
 	    };
 	    return _this;
 	  }
@@ -21741,11 +21798,19 @@
 	          defaultDate: this.state.minDate,
 	          disableYearSelection: false
 	        }),
-	        _react2.default.createElement(_comeeditormodal2.default, { come: null }),
+	        this.state.openEditor && _react2.default.createElement(_comeeditormodal2.default, {
+	          open: this.state.openEditor,
+	          close: this.closeEditor,
+	          index: this.state.selectedIndex,
+	          come: this.state.selectedCome,
+	          store: this.state.storeMethod,
+	          update: this.state.updateMethod,
+	          'delete': this.state.deleteMethod
+	        }),
 	        _react2.default.createElement(
 	          _Table.Table,
 	          { onCellClick: function onCellClick(row) {
-	              _this2.setState({ selectionIndex: row, selectedIncome: _this2.state.incomes[row] });
+	              _this2.selectIncome(row);
 	            } },
 	          _react2.default.createElement(
 	            _Table.TableHeader,
@@ -21793,7 +21858,9 @@
 	              _react2.default.createElement(
 	                _Table.TableRowColumn,
 	                { colSpan: '3', style: { textAlign: 'center' } },
-	                _react2.default.createElement(_materialUi.RaisedButton, { label: 'Nuevo Ingreso', primary: true })
+	                _react2.default.createElement(_materialUi.RaisedButton, { label: 'Nuevo Ingreso', primary: true, onClick: function onClick() {
+	                    _this2.createIncome();
+	                  } })
 	              )
 	            )
 	          )
@@ -21801,7 +21868,7 @@
 	        _react2.default.createElement(
 	          _Table.Table,
 	          { onCellClick: function onCellClick(row) {
-	              _this2.setState({ selectionIndex: row, selectedOutcome: _this2.state.outcomes[row] });
+	              _this2.selectOutcome(row);
 	            } },
 	          _react2.default.createElement(
 	            _Table.TableHeader,
@@ -21849,7 +21916,9 @@
 	              _react2.default.createElement(
 	                _Table.TableRowColumn,
 	                { colSpan: '3', style: { textAlign: 'center' } },
-	                _react2.default.createElement(_materialUi.RaisedButton, { label: 'Nuevo Gasto', primary: true })
+	                _react2.default.createElement(_materialUi.RaisedButton, { label: 'Nuevo Gasto', primary: true, onClick: function onClick() {
+	                    _this2.createOutcome();
+	                  } })
 	              )
 	            )
 	          )
@@ -61567,8 +61636,157 @@
 /* 548 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _materialUi = __webpack_require__(180);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var ComeEditorModal = function (_React$Component) {
+	  _inherits(ComeEditorModal, _React$Component);
+
+	  function ComeEditorModal(props) {
+	    _classCallCheck(this, ComeEditorModal);
+
+	    var _this = _possibleConstructorReturn(this, (ComeEditorModal.__proto__ || Object.getPrototypeOf(ComeEditorModal)).call(this, props));
+
+	    _this.handleChangeConcept = function (event) {
+	      var come = _this.state.come;
+	      come.concept = event.target.value;
+	      _this.setState({ come: come });
+	    };
+
+	    _this.handleChangeAmmount = function (event) {
+	      var come = _this.state.come;
+	      var regex = /^[. \d]*$/;
+	      if (regex.test(event.target.value)) {
+	        come.ammount = event.target.value;
+	      }
+	      _this.setState({ come: come });
+	    };
+
+	    _this.handleChangeDate = function (event, date) {
+	      var come = _this.state.come;
+	      var regex = /^[- \d]*$/;
+	      if (regex.test(event.target.value)) {
+	        come.date = event.target.value;
+	      }
+	      _this.setState({ come: come });
+	    };
+
+	    _this.parseAmmount = function () {
+	      var come = _this.state.come;
+	      come.ammount = parseFloat(come.ammount);
+	      _this.setState({ come: come });
+	    };
+
+	    _this.handleSave = function () {
+	      _this.parseAmmount();
+	      if (_this.props.index !== -1) {
+	        _this.props.update(_this.state.come, _this.props.index);
+	      } else {
+	        _this.props.store(_this.state.come);
+	      }
+	      _this.props.close();
+	    };
+
+	    _this.handleDeletion = function () {
+	      if (_this.props.index !== -1) {
+	        _this.props.delete(_this.props.index);
+	      }
+	      _this.props.close();
+	    };
+
+	    var date = new Date();
+	    var dd = date.getDate();
+	    var mm = date.getMonth() + 1;
+	    var yyyy = date.getFullYear();
+	    if (dd < 10) {
+	      dd = '0' + dd;
+	    }
+	    if (mm < 10) {
+	      mm = '0' + mm;
+	    }
+	    var today = dd + '-' + mm + '-' + yyyy;
+	    _this.state = {
+	      come: _this.props.come != null ? _this.props.come : {
+	        concept: "",
+	        ammount: 0,
+	        date: today
+	      }
+	    };
+	    return _this;
+	  }
+
+	  _createClass(ComeEditorModal, [{
+	    key: 'render',
+	    value: function render() {
+	      var actions = [_react2.default.createElement(_materialUi.RaisedButton, {
+	        label: 'Guardar',
+	        primary: true,
+	        onClick: this.handleSave
+	      }), _react2.default.createElement(_materialUi.RaisedButton, {
+	        label: 'Eliminar',
+	        secondary: true,
+	        onClick: this.handleDeletion
+	      })];
+
+	      return _react2.default.createElement(
+	        _materialUi.Dialog,
+	        {
+	          actions: actions,
+	          onRequestClose: this.props.close,
+	          open: this.props.open
+	        },
+	        _react2.default.createElement(_materialUi.TextField, {
+	          id: 'concept-field',
+	          floatingLabelText: 'Concepto',
+	          value: this.state.come.concept,
+	          onChange: this.handleChangeConcept
+	        }),
+	        _react2.default.createElement(_materialUi.TextField, {
+	          id: 'ammount-field',
+	          floatingLabelText: 'Cantidad (\u20AC)',
+	          value: this.state.come.ammount,
+	          onChange: this.handleChangeAmmount
+	        }),
+	        _react2.default.createElement(_materialUi.TextField, {
+	          id: 'date-field',
+	          floatingLabelText: 'Fecha (dd-mm-yyyy)',
+	          value: this.state.come.date,
+	          onChange: this.handleChangeDate
+	        })
+	      );
+	    }
+	  }]);
+
+	  return ComeEditorModal;
+	}(_react2.default.Component);
+
+	exports.default = ComeEditorModal;
+
+/***/ },
+/* 549 */
+/***/ function(module, exports, __webpack_require__) {
+
 	/* WEBPACK VAR INJECTION */(function(process) {var invariant = __webpack_require__(9);
-	var defaultClickRejectionStrategy = __webpack_require__(549);
+	var defaultClickRejectionStrategy = __webpack_require__(550);
 
 	var alreadyInjected = false;
 
@@ -61590,14 +61808,14 @@
 	  alreadyInjected = true;
 
 	  __webpack_require__(43).injection.injectEventPluginsByName({
-	    'TapEventPlugin':       __webpack_require__(550)(shouldRejectClick)
+	    'TapEventPlugin':       __webpack_require__(551)(shouldRejectClick)
 	  });
 	};
 
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 549 */
+/* 550 */
 /***/ function(module, exports) {
 
 	module.exports = function(lastTouchEvent, clickTimestamp) {
@@ -61608,7 +61826,7 @@
 
 
 /***/ },
-/* 550 */
+/* 551 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -61632,14 +61850,14 @@
 
 	"use strict";
 
-	var EventConstants = __webpack_require__(551);
+	var EventConstants = __webpack_require__(552);
 	var EventPluginUtils = __webpack_require__(45);
 	var EventPropagators = __webpack_require__(42);
 	var SyntheticUIEvent = __webpack_require__(76);
-	var TouchEventUtils = __webpack_require__(552);
+	var TouchEventUtils = __webpack_require__(553);
 	var ViewportMetrics = __webpack_require__(77);
 
-	var keyOf = __webpack_require__(553);
+	var keyOf = __webpack_require__(554);
 	var topLevelTypes = EventConstants.topLevelTypes;
 
 	var isStartish = EventPluginUtils.isStartish;
@@ -61785,7 +62003,7 @@
 
 
 /***/ },
-/* 551 */
+/* 552 */
 /***/ function(module, exports) {
 
 	/**
@@ -61881,7 +62099,7 @@
 	module.exports = EventConstants;
 
 /***/ },
-/* 552 */
+/* 553 */
 /***/ function(module, exports) {
 
 	/**
@@ -61929,7 +62147,7 @@
 
 
 /***/ },
-/* 553 */
+/* 554 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -61966,112 +62184,6 @@
 	};
 
 	module.exports = keyOf;
-
-/***/ },
-/* 554 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(2);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _materialUi = __webpack_require__(180);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var ComeEditorModal = function (_React$Component) {
-	  _inherits(ComeEditorModal, _React$Component);
-
-	  function ComeEditorModal(props) {
-	    _classCallCheck(this, ComeEditorModal);
-
-	    var _this = _possibleConstructorReturn(this, (ComeEditorModal.__proto__ || Object.getPrototypeOf(ComeEditorModal)).call(this, props));
-
-	    _this.handleChangeConcept = function (event) {
-	      var come = _this.state.come;
-	      come.concept = event.target.value;
-	      _this.setState({ come: come });
-	    };
-
-	    _this.handleChangeAmmount = function (event) {
-	      var come = _this.state.come;
-	      var regex = /^[. \d]*$/;
-	      if (regex.test(event.target.value)) {
-	        come.ammount = event.target.value;
-	      }
-	      _this.setState({ come: come });
-	    };
-
-	    _this.handleChangeDate = function (event, date) {
-	      var come = _this.state.come;
-	      come.date = date;
-	      _this.setState({ come: come });
-	    };
-
-	    _this.state = {
-	      come: _this.props.come != null ? _this.props.come : {
-	        concept: "", ammount: 0, date: new Date().getFullYear()
-	      }
-	    };
-	    return _this;
-	  }
-
-	  _createClass(ComeEditorModal, [{
-	    key: 'render',
-	    value: function render() {
-	      var actions = [_react2.default.createElement(_materialUi.RaisedButton, {
-	        label: 'Guardar',
-	        primary: true
-	      }), _react2.default.createElement(_materialUi.RaisedButton, {
-	        label: 'Eliminar',
-	        secondary: true
-	      })];
-
-	      return _react2.default.createElement(
-	        _materialUi.Dialog,
-	        {
-	          actions: actions,
-	          modal: true,
-	          open: false
-	        },
-	        _react2.default.createElement(_materialUi.TextField, {
-	          id: 'concept-field',
-	          floatingLabelText: 'Concepto',
-	          value: this.state.come.concept,
-	          onChange: this.handleChangeConcept
-	        }),
-	        _react2.default.createElement(_materialUi.TextField, {
-	          id: 'ammount-field',
-	          floatingLabelText: 'Cantidad (\u20AC)',
-	          value: this.state.come.ammount,
-	          onChange: this.handleChangeAmmount
-	        }),
-	        _react2.default.createElement(_materialUi.DatePicker, {
-	          onChange: this.handleChangeDate,
-	          floatingLabelText: 'Fecha'
-	        })
-	      );
-	    }
-	  }]);
-
-	  return ComeEditorModal;
-	}(_react2.default.Component);
-
-	exports.default = ComeEditorModal;
 
 /***/ }
 /******/ ]);

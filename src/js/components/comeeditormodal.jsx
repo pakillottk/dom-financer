@@ -1,13 +1,27 @@
 import React from 'react';
 import {Dialog, RaisedButton } from 'material-ui';
-import {DatePicker, TextField} from 'material-ui';
+import {TextField} from 'material-ui';
 
 export default class ComeEditorModal extends React.Component {
   constructor(props) {
     super( props );
+    const date = new Date();
+    let dd = date.getDate();
+    let mm = date.getMonth()+1;
+    const yyyy = date.getFullYear();
+    if( dd < 10 ){
+        dd = '0' + dd;
+    }
+    if( mm < 10 ){
+        mm = '0' + mm;
+    }
+    const today = dd + '-' + mm + '-' + yyyy;
     this.state = {
-      come: this.props.come != null ? this.props.come : {
-        concept: "" , ammount: 0, date: new Date().getFullYear()
+      come: this.props.come != null ?
+        this.props.come : {
+        concept: "" ,
+        ammount: 0,
+        date: today
       }
     };
   }
@@ -29,8 +43,34 @@ export default class ComeEditorModal extends React.Component {
 
   handleChangeDate = (event, date) => {
     const come = this.state.come;
-    come.date = date;
+    const regex = /^[- \d]*$/;
+    if( regex.test( event.target.value ) ) {
+       come.date = event .target.value;
+    }
     this.setState( { come: come } );
+  }
+
+  parseAmmount = () => {
+    const come = this.state.come;
+    come.ammount = parseFloat( come.ammount );
+    this.setState( { come: come } );
+  }
+
+  handleSave = () => {
+    this.parseAmmount();
+    if( this.props.index !== -1 ){
+      this.props.update(this.state.come, this.props.index);
+    } else {
+      this.props.store(this.state.come);
+    }
+    this.props.close();
+  }
+
+  handleDeletion = () => {
+    if( this.props.index !== -1 ) {
+      this.props.delete(this.props.index);
+    }
+    this.props.close();
   }
 
   render() {
@@ -38,18 +78,20 @@ export default class ComeEditorModal extends React.Component {
       <RaisedButton
         label="Guardar"
         primary
+        onClick={this.handleSave}
       />,
       <RaisedButton
         label="Eliminar"
         secondary
+        onClick={this.handleDeletion}
       />
     ];
 
     return (
       <Dialog
         actions={actions}
-        modal
-        open={false}
+        onRequestClose={this.props.close}
+        open={this.props.open}
       >
         <TextField
           id="concept-field"
@@ -63,9 +105,11 @@ export default class ComeEditorModal extends React.Component {
           value={this.state.come.ammount}
           onChange={this.handleChangeAmmount}
         />
-        <DatePicker
+        <TextField
+          id="date-field"
+          floatingLabelText="Fecha (dd-mm-yyyy)"
+          value={this.state.come.date}
           onChange={this.handleChangeDate}
-          floatingLabelText="Fecha"
         />
       </Dialog>
     );
