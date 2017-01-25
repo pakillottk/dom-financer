@@ -1,0 +1,15 @@
+{
+  "name": "dom-financer",
+  "version": "0.1.0",
+  "description": "Small APP for managing home economics.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Fco. Gázquez",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^1.4.15"
+  }
+}
