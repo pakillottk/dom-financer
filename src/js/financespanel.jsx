@@ -16,8 +16,7 @@ export default class FinancesPanel extends React.Component {
       minDate: minDate,
       maxDate: maxDate,
       selectionIndex: -1,
-      selectedIncome: null,
-      selectedOutcome: null,
+      selectedCome: null,
       incomes: [{
         concept: "Ingreso A",
         ammount: 500.0,
@@ -27,7 +26,10 @@ export default class FinancesPanel extends React.Component {
         concept: "Gasto A",
         ammount: 1000.0,
         date: "30-01-2017"
-      }]
+      }],
+      storeMethod: this.storeIncome,
+      updateMethod: this.updateIncome,
+      deleteMethod: this.deleteIncome
     };
   }
 
@@ -41,6 +43,22 @@ export default class FinancesPanel extends React.Component {
     this.setState({
       maxDate: date,
     })
+  }
+
+  setIncomesMethods = () => {
+    this.setState({
+      storeMethod: this.storeIncome,
+      updateMethod: this.updateIncome,
+      deleteMethod: this.deleteIncome
+    });
+  }
+
+  setOutcomesMethods = () => {
+    this.setState({
+      storeMethod: this.storeOutcome,
+      updateMethod: this.updateOutcome,
+      deleteMethod: this.deleteOutcome
+    });
   }
 
   storeIncome = (income) => {
@@ -77,6 +95,16 @@ export default class FinancesPanel extends React.Component {
     const outcomes = this.state.outcomes;
     outcomes.splice(index, 1);
     this.setState({outcomes: outcomes});
+  }
+
+  selectIncome = (index) => {
+    this.setIncomesMethods();
+    this.setState( { selectedIndex: index, selectedCome: incomes[index] } );
+  }
+
+  selectOutcome = (index) => {
+    this.setOutcomesMethods();
+    this.setState( { selectedIndex: index, selectedCome: outcomes[index] } );
   }
 
   render() {
