@@ -20,5 +20,8 @@
     "material-ui": "^0.16.7",
     "react-tap-event-plugin": "^2.0.1",
     "webpack": "^1.14.0"
+  },
+  "dependencies": {
+    "nedb": "^1.8.0"
   }
 }

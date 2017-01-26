@@ -7,7 +7,6 @@ import ComeEditorModal from './components/comeeditormodal.jsx';
 export default class FinancesPanel extends React.Component {
   constructor(props) {
     super(props);
-
     const minDate = new Date();
     const maxDate = new Date();
     maxDate.setFullYear(maxDate.getFullYear() + 1);
@@ -17,21 +16,26 @@ export default class FinancesPanel extends React.Component {
       maxDate: maxDate,
       selectionIndex: -1,
       selectedCome: null,
-      incomes: [{
-        concept: "Ingreso A",
-        ammount: 500.0,
-        date: "23-01-2017"
-      }],
-      outcomes: [{
-        concept: "Gasto A",
-        ammount: 1000.0,
-        date: "30-01-2017"
-      }],
+      incomes: [],
+      outcomes: [],
       storeMethod: this.storeIncome,
       updateMethod: this.updateIncome,
       deleteMethod: this.deleteIncome,
       openEditor: false
     };
+  }
+
+  componentWillMount() {
+    this.props.getIncomes(this.getIncomesFromDB);
+    this.props.getOutcomes(this.getOutcomesFromDB);
+  }
+
+  getIncomesFromDB = (docs) => {
+    this.setState( { incomes: docs } );
+  }
+
+  getOutcomesFromDB = (docs) => {
+    this.setState( { outcomes: docs } );
   }
 
   handleChangeMinDate = (event, date) => {
@@ -64,11 +68,20 @@ export default class FinancesPanel extends React.Component {
 
   storeIncome = (income) => {
     const incomes = this.state.incomes;
+    const id = this.props.storeIncomeDB(income);
+    if(id === null){
+      return null;
+    }
+    income._id = id;
     incomes.push(income);
     this.setState({incomes: incomes});
   }
 
   updateIncome = (income, index) => {
+    const updated = this.props.updateIncomeDB(income);
+    if( updated === null ) {
+      return null;
+    }
     const incomes = this.state.incomes;
     incomes[index] = income;
     this.setState({incomes: incomes});
@@ -76,17 +89,30 @@ export default class FinancesPanel extends React.Component {
 
   deleteIncome = (index) => {
     const incomes = this.state.incomes;
+    const deleted = this.props.deleteIncomeDB(incomes[index]);
+    if( deleted === null ) {
+      return null;
+    }
     incomes.splice(index, 1);
     this.setState({incomes: incomes});
   }
 
   storeOutcome = (outcome) => {
     const outcomes = this.state.outcomes;
+    const id = this.props.storeOutcomeDB(outcome);
+    if(id === null){
+      return null;
+    }
+    outcome._id = id;
     outcomes.push(outcome);
     this.setState({outcomes: outcomes});
   }
 
   updateOutcome = (outcome, index) => {
+    const updated = this.props.updateOutcomeDB(outcome);
+    if( updated === null ) {
+      return null;
+    }
     const outcomes = this.state.outcomes;
     outcomes[index] = outcome;
     this.setState({outcomes: outcomes});
@@ -94,6 +120,10 @@ export default class FinancesPanel extends React.Component {
 
   deleteOutcome = (index) => {
     const outcomes = this.state.outcomes;
+    const deleted = this.props.deleteOutcomeDB(outcomes[index]);
+    if( deleted === null ) {
+      return null;
+    }
     outcomes.splice(index, 1);
     this.setState({outcomes: outcomes});
   }

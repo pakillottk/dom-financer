@@ -5,7 +5,7 @@ module.exports = {
   entry: [
     './src/js/app.jsx',
   ],
-
+  target:'node',
   output: {
     path: path.resolve(__dirname, './app'),
     filename: 'js/app.js'
