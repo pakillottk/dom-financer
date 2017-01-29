@@ -9,15 +9,17 @@ export default class FinancesPanel extends React.Component {
     super(props);
     const minDate = new Date();
     const maxDate = new Date();
-    maxDate.setFullYear(maxDate.getFullYear() + 1);
 
     this.state = {
       minDate: minDate,
       maxDate: maxDate,
+      refreshData: false,
       selectionIndex: -1,
       selectedCome: null,
       incomes: [],
       outcomes: [],
+      incomesFilter: "",
+      outcomesFilter: "",
       storeMethod: this.storeIncome,
       updateMethod: this.updateIncome,
       deleteMethod: this.deleteIncome,
@@ -26,27 +28,33 @@ export default class FinancesPanel extends React.Component {
   }
 
   componentWillMount() {
+    this.refreshDataFromDB();
+  }
+
+  refreshDataFromDB = () => {
     this.props.getIncomesInRange( this.state.minDate, this.state.maxDate, this.getIncomesFromDB );
-    this.props.getOutcomes(this.getOutcomesFromDB);
+    this.props.getOutcomesInRange( this.state.minDate, this.state.maxDate, this.getOutcomesFromDB );
   }
 
   getIncomesFromDB = (docs) => {
-    this.setState( { incomes: docs } );
+    this.setState( { incomes: docs, refreshData: false } );
   }
 
   getOutcomesFromDB = (docs) => {
-    this.setState( { outcomes: docs } );
+    this.setState( { outcomes: docs, refreshData: false } );
   }
 
   handleChangeMinDate = (event, date) => {
     this.setState({
       minDate: date,
+      refreshData: true
     })
   }
 
   handleChangeMaxDate = (event, date) => {
     this.setState({
       maxDate: date,
+      refreshData: true
     })
   }
 
@@ -167,6 +175,10 @@ export default class FinancesPanel extends React.Component {
   }
 
   render() {
+    if( this.state.refreshData ) {
+      this.refreshDataFromDB();
+    }
+
     let totalIncome = 0.0;
     let totalOutcome = 0.0;
 
@@ -208,7 +220,7 @@ export default class FinancesPanel extends React.Component {
           floatingLabelText="Fecha final"
           onChange={this.handleChangeMaxDate}
           autoOk={false}
-          defaultDate={this.state.minDate}
+          defaultDate={this.state.maxDate}
           disableYearSelection={false}
         />
 

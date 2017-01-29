@@ -19,6 +19,7 @@ class App extends React.Component {
           updateIncomeDB={db.updateIncome}
           deleteIncomeDB={db.deleteIncome}
           getOutcomes={db.getAllOutcomes}
+          getOutcomesInRange={db.getOutcomesInRange}
           storeOutcomeDB={db.insertOutcome}
           updateOutcomeDB={db.updateOutcome}
           deleteOutcomeDB={db.deleteOutcome}

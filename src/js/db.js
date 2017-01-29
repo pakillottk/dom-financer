@@ -70,6 +70,17 @@ export default class DB {
     })
   }
 
+  getOutcomesInRange = ( minDate, maxDate, callback ) => {
+    this.db.outcomes.find( { "date": { $gte: minDate, $lte: maxDate } }, ( err, docs ) => {
+      if ( err !== null) {
+          console.error(err);
+          return;
+      }
+      callback(docs);
+    })
+  }
+
+
   insertOutcome = ( outcome ) => {
     this.db.outcomes.insert( outcome, (err, newDoc) => {
       if( err !== null ) {
