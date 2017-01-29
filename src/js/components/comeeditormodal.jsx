@@ -1,11 +1,12 @@
 import React from 'react';
 import {Dialog, RaisedButton } from 'material-ui';
-import {TextField} from 'material-ui';
+import { TextField, DatePicker } from 'material-ui';
 
 export default class ComeEditorModal extends React.Component {
   constructor(props) {
     super( props );
     const date = new Date();
+    /*
     let dd = date.getDate();
     let mm = date.getMonth()+1;
     const yyyy = date.getFullYear();
@@ -16,12 +17,13 @@ export default class ComeEditorModal extends React.Component {
         mm = '0' + mm;
     }
     const today = dd + '-' + mm + '-' + yyyy;
+    */
     this.state = {
       come: this.props.come != null ?
         this.props.come : {
         concept: "" ,
         ammount: 0,
-        date: today
+        date: date
       }
     };
   }
@@ -43,10 +45,7 @@ export default class ComeEditorModal extends React.Component {
 
   handleChangeDate = (event, date) => {
     const come = this.state.come;
-    const regex = /^[- \d]*$/;
-    if( regex.test( event.target.value ) ) {
-       come.date = event .target.value;
-    }
+    come.date = date;
     this.setState( { come: come } );
   }
 
@@ -105,11 +104,12 @@ export default class ComeEditorModal extends React.Component {
           value={this.state.come.ammount}
           onChange={this.handleChangeAmmount}
         />
-        <TextField
-          id="date-field"
-          floatingLabelText="Fecha (dd-mm-yyyy)"
-          value={this.state.come.date}
+        <DatePicker
+          floatingLabelText="Fecha"
           onChange={this.handleChangeDate}
+          autoOk={false}
+          defaultDate={this.state.come.date}
+          disableYearSelection={false}
         />
       </Dialog>
     );

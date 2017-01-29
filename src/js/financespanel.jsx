@@ -26,7 +26,7 @@ export default class FinancesPanel extends React.Component {
   }
 
   componentWillMount() {
-    this.props.getIncomes(this.getIncomesFromDB);
+    this.props.getIncomesInRange( this.state.minDate, this.state.maxDate, this.getIncomesFromDB );
     this.props.getOutcomes(this.getOutcomesFromDB);
   }
 
@@ -177,7 +177,7 @@ export default class FinancesPanel extends React.Component {
         ( <TableRow key={index} id={index}>
             <TableRowColumn> {income.concept} </TableRowColumn>
             <TableRowColumn> {income.ammount + "€"} </TableRowColumn>
-            <TableRowColumn> {income.date} </TableRowColumn>
+            <TableRowColumn> { income.date.toISOString().slice(0,10).replace(/-/g,"-") } </TableRowColumn>
           </TableRow>)
       );
     })
@@ -190,7 +190,7 @@ export default class FinancesPanel extends React.Component {
         ( <TableRow key={index} id={index}>
             <TableRowColumn> {outcome.concept} </TableRowColumn>
             <TableRowColumn> {outcome.ammount + "€"} </TableRowColumn>
-            <TableRowColumn> {outcome.date} </TableRowColumn>
+            <TableRowColumn> { outcome.date.toISOString().slice(0,10).replace(/-/g,"-") } </TableRowColumn>
           </TableRow>)
       );
     })

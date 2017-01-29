@@ -13,6 +13,7 @@ class App extends React.Component {
     return(
       <MuiThemeProvider>
         <FinancesPanel
+          getIncomesInRange={db.getIncomesInRange}
           getIncomes={db.getAllIncomes}
           storeIncomeDB={db.insertIncome}
           updateIncomeDB={db.updateIncome}

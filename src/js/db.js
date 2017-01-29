@@ -10,13 +10,22 @@ export default class DB {
   }
 
   getAllIncomes = (callback) => {
-    let result = [];
     this.db.incomes.find( {}, (err, docs) => {
         if( err !== null ) {
           console.error(err);
           return;
         }
         callback(docs);
+    })
+  }
+
+  getIncomesInRange = ( minDate, maxDate, callback ) => {
+    this.db.incomes.find( { "date": { $gte: minDate, $lte: maxDate } }, ( err, docs ) => {
+      if ( err !== null) {
+          console.error(err);
+          return;
+      }
+      callback(docs);
     })
   }
 
