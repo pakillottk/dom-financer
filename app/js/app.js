@@ -27642,6 +27642,14 @@
 	      _this.openEditor();
 	    };
 
+	    _this.handleChangeIncomesFilter = function (event) {
+	      _this.setState({ incomesFilter: event.target.value });
+	    };
+
+	    _this.handleChangeOutcomesFilter = function (event) {
+	      _this.setState({ outcomesFilter: event.target.value });
+	    };
+
 	    _this.openEditor = function () {
 	      _this.setState({ openEditor: true });
 	    };
@@ -27652,7 +27660,6 @@
 
 	    var minDate = new Date();
 	    var maxDate = new Date();
-
 	    _this.state = {
 	      minDate: minDate,
 	      maxDate: maxDate,
@@ -27691,6 +27698,9 @@
 	      var incomesRows = [];
 	      this.state.incomes.forEach(function (income, index) {
 	        totalIncome += income.ammount;
+	        if (!income.concept.toLowerCase().includes(_this2.state.incomesFilter.toLowerCase())) {
+	          return;
+	        }
 	        incomesRows.push(_react2.default.createElement(
 	          _Table.TableRow,
 	          { key: index, id: index },
@@ -27721,6 +27731,9 @@
 	      var outcomesRows = [];
 	      this.state.outcomes.forEach(function (outcome, index) {
 	        totalOutcome += outcome.ammount;
+	        if (!outcome.concept.toLowerCase().includes(_this2.state.outcomesFilter.toLowerCase())) {
+	          return;
+	        }
 	        outcomesRows.push(_react2.default.createElement(
 	          _Table.TableRow,
 	          { key: index, id: index },
@@ -27796,6 +27809,20 @@
 	              null,
 	              _react2.default.createElement(
 	                _Table.TableHeaderColumn,
+	                { tooltip: 'Busque un ingreso por concepto' },
+	                _react2.default.createElement(_materialUi.TextField, {
+	                  id: 'incomes-filter-field',
+	                  floatingLabelText: 'Buscar Ingreso',
+	                  value: this.state.incomesFilter,
+	                  onChange: this.handleChangeIncomesFilter
+	                })
+	              )
+	            ),
+	            _react2.default.createElement(
+	              _Table.TableRow,
+	              null,
+	              _react2.default.createElement(
+	                _Table.TableHeaderColumn,
 	                null,
 	                'Ingreso'
 	              ),
@@ -27847,6 +27874,20 @@
 	                _Table.TableHeaderColumn,
 	                { colSpan: '3', tooltip: 'Haga click en un gasto para editar o eliminar', style: { textAlign: 'center' } },
 	                'GASTOS'
+	              )
+	            ),
+	            _react2.default.createElement(
+	              _Table.TableRow,
+	              null,
+	              _react2.default.createElement(
+	                _Table.TableHeaderColumn,
+	                { tooltip: 'Busque un gasto por concepto' },
+	                _react2.default.createElement(_materialUi.TextField, {
+	                  id: 'outcomes-filter-field',
+	                  floatingLabelText: 'Buscar Gasto',
+	                  value: this.state.outcomesFilter,
+	                  onChange: this.handleChangeOutcomesFilter
+	                })
 	              )
 	            ),
 	            _react2.default.createElement(

@@ -1,15 +1,14 @@
 import React from 'react';
-import {DatePicker} from 'material-ui';
+import {DatePicker, TextField} from 'material-ui';
 import {Table, TableBody, TableHeader, TableFooter, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
 import {RaisedButton} from 'material-ui';
 import ComeEditorModal from './components/comeeditormodal.jsx';
 
 export default class FinancesPanel extends React.Component {
   constructor(props) {
-    super(props);
+    super( props );
     const minDate = new Date();
     const maxDate = new Date();
-
     this.state = {
       minDate: minDate,
       maxDate: maxDate,
@@ -166,6 +165,14 @@ export default class FinancesPanel extends React.Component {
     this.openEditor();
   }
 
+  handleChangeIncomesFilter = (event) => {
+    this.setState( { incomesFilter: event.target.value } );
+  }
+
+  handleChangeOutcomesFilter = (event) => {
+    this.setState( { outcomesFilter: event.target.value } );
+  }
+
   openEditor = () => {
     this.setState( { openEditor: true } );
   }
@@ -185,6 +192,9 @@ export default class FinancesPanel extends React.Component {
     const incomesRows = [];
     this.state.incomes.forEach((income, index) => {
       totalIncome += income.ammount;
+      if( !income.concept.toLowerCase().includes( this.state.incomesFilter.toLowerCase() ) ) {
+        return;
+      }
       incomesRows.push(
         ( <TableRow key={index} id={index}>
             <TableRowColumn> {income.concept} </TableRowColumn>
@@ -198,6 +208,9 @@ export default class FinancesPanel extends React.Component {
     const outcomesRows = [];
     this.state.outcomes.forEach((outcome, index) => {
       totalOutcome += outcome.ammount;
+      if( !outcome.concept.toLowerCase().includes( this.state.outcomesFilter.toLowerCase() ) ) {
+        return;
+      }
       outcomesRows.push(
         ( <TableRow key={index} id={index}>
             <TableRowColumn> {outcome.concept} </TableRowColumn>
@@ -243,6 +256,16 @@ export default class FinancesPanel extends React.Component {
               </TableHeaderColumn>
             </TableRow>
             <TableRow>
+              <TableHeaderColumn tooltip="Busque un ingreso por concepto">
+                <TextField
+                  id="incomes-filter-field"
+                  floatingLabelText="Buscar Ingreso"
+                  value={this.state.incomesFilter}
+                  onChange={this.handleChangeIncomesFilter}
+                />
+              </TableHeaderColumn>
+            </TableRow>
+            <TableRow>
               <TableHeaderColumn>Ingreso</TableHeaderColumn>
               <TableHeaderColumn>Cantidad</TableHeaderColumn>
               <TableHeaderColumn>Fecha</TableHeaderColumn>
@@ -266,6 +289,16 @@ export default class FinancesPanel extends React.Component {
             <TableRow>
               <TableHeaderColumn colSpan="3" tooltip="Haga click en un gasto para editar o eliminar" style={{textAlign: 'center'}}>
                 GASTOS
+              </TableHeaderColumn>
+            </TableRow>
+            <TableRow>
+              <TableHeaderColumn tooltip="Busque un gasto por concepto">
+                <TextField
+                  id="outcomes-filter-field"
+                  floatingLabelText="Buscar Gasto"
+                  value={this.state.outcomesFilter}
+                  onChange={this.handleChangeOutcomesFilter}
+                />
               </TableHeaderColumn>
             </TableRow>
             <TableRow>
